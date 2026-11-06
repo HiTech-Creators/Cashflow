@@ -1,0 +1,1879 @@
+{
+	"info": {
+		"_postman_id": "2b46cfd1-1976-463a-a3ba-25b40184e315",
+		"name": "CashFlow backend API",
+		"description": "Complete API collection for CashFlow Backend - Financial Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30523328",
+		"_collection_link": "https://closet-9778.postman.co/workspace/Closet-Workspace~7265c4cc-f19a-49c0-8052-d2a16ef65fe3/collection/30523328-2b46cfd1-1976-463a-a3ba-25b40184e315?action=share&source=collection_link&creator=30523328"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Create SuperAdmin (One-time Setup)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"email\": \"admin@taha.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/create-superadmin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"create-superadmin"
+							]
+						},
+						"description": "Create the first SuperAdmin user (one-time setup)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set('access_token', jsonData.access_token);",
+									"}",
+									"if (jsonData.default_company_id) {",
+									"    pm.collectionVariables.set('company_id', jsonData.default_company_id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login and receive JWT token. Token is automatically saved to collection variables."
+					},
+					"response": []
+				},
+				{
+					"name": "Register by Invitation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"mahwiz_user\",\n  \"password\": \"UserPassword123!\",\n  \"invitation_token\": \"_fNkxCaZZ24SV8Buf4p-GZ4LqI1W4bLyhOeG0g8L3l0\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user using an invitation token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company Management",
+			"item": [
+				{
+					"name": "Create Company (SuperAdmin Only)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Third Company\",\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies"
+							]
+						},
+						"description": "Create a new company (SuperAdmin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "List User Companies",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/companies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies"
+							]
+						},
+						"description": "Get all companies the current user has access to"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Company Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}"
+							]
+						},
+						"description": "Get details of a specific company"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Third Company Updated\",\n  \"currency\": \"EUR\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}"
+							]
+						},
+						"description": "Update company details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Company",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}"
+							]
+						},
+						"description": "Delete a company"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Invite User to Company",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mahwiz@example.com\",\n  \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}/invite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}",
+								"invite"
+							]
+						},
+						"description": "Invite a user to join a company"
+					},
+					"response": []
+				},
+				{
+					"name": "List Company Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}",
+								"users"
+							]
+						},
+						"description": "List all users in a company"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Company Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"3rdcompanyadmin\",\n  \"email\": \"admin3@company.com\",\n  \"password\": \"AdminPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{company_id}}/create-admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								"{{company_id}}",
+								"create-admin"
+							]
+						},
+						"description": "Create a CompanyAdmin for a company (SuperAdmin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Create Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\",\n  \"date\": \"2025-10-20\",\n  \"description\": \"Office supplies sold\",\n  \"amount\": 1550.00,\n  \"type\": \"inflow\",\n  \"category\": \"Operating Expenses\",\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							]
+						},
+						"description": "Create a new transaction"
+					},
+					"response": []
+				},
+				{
+					"name": "List Transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/transactions?company_id={{company_id}}&page=1&per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get paginated list of transactions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/edit/{{transaction_id}}?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"edit",
+								"{{transaction_id}}"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get details of a specific transaction for editing"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2025-10-22\",\n  \"description\": \"Updated office supplies\",\n  \"amount\": 350.00,\n  \"type\": \"outflow\",\n  \"category\": \"Operating Expenses\",\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/edit/{{transaction_id}}?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"edit",
+								"{{transaction_id}}"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Update an existing transaction"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delete/{{transaction_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"delete",
+								"{{transaction_id}}"
+							]
+						},
+						"description": "Delete a transaction by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Forecasting",
+			"item": [
+				{
+					"name": "Create Forecast",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\",\n  \"months\": 12,\n  \"type\": \"manual\",\n  \"scenario_name\": \"Conservative Growth\",\n  \"scenario_params\": {\n    \"growth_rate\": 0.05\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/forecasts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"forecasts"
+							]
+						},
+						"description": "Create a new forecast (manual or AI-based)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Forecasts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/forecasts?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"forecasts"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get all forecasts for a company"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Dashboard KPIs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"dashboard"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get dashboard KPIs including inflows, outflows, and financial metrics"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Working Capital",
+			"item": [
+				{
+					"name": "Get Receivables",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/receivables?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"receivables"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get all accounts receivable"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payables",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/payables?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"payables"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get all accounts payable"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Inventory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inventory?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inventory"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get inventory items"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Aging Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/aging?company_id={{company_id}}&type=receivables",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"aging"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "type",
+									"value": "receivables",
+									"description": "receivables or payables"
+								}
+							]
+						},
+						"description": "Get aging report for receivables or payables"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Budgeting",
+			"item": [
+				{
+					"name": "Create Budget",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\",\n  \"category\": \"Marketing\",\n  \"amount\": 5000.00,\n  \"period\": \"2025-10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/budgets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"budgets"
+							]
+						},
+						"description": "Create a new budget for a category and period"
+					},
+					"response": []
+				},
+				{
+					"name": "List Budgets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/budgets?company_id={{company_id}}&period=2025-10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"budgets"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "period",
+									"value": "2025-10",
+									"description": "Optional: filter by period (YYYY-MM)"
+								}
+							]
+						},
+						"description": "Get budgets for a company (optionally filtered by period)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Budget Variances",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/variances?company_id={{company_id}}&period=2025-10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"variances"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "period",
+									"value": "2025-10",
+									"description": "Required: period in YYYY-MM format"
+								}
+							]
+						},
+						"description": "Calculate variance between budgeted and actual spending"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AI Features",
+			"item": [
+				{
+					"name": "Auto-Categorize Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Monthly subscription to Adobe Creative Cloud\",\n  \"amount\": 54.99,\n  \"merchant\": \"Adobe Inc.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ai/categorize",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ai",
+								"categorize"
+							]
+						},
+						"description": "Automatically categorize a transaction using AI"
+					},
+					"response": []
+				},
+				{
+					"name": "Detect Anomalies",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ai/anomalies?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ai",
+								"anomalies"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Detect unusual transactions that may indicate fraud or errors"
+					},
+					"response": []
+				},
+				{
+					"name": "Financial Chat Assistant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"What's my current cash runway?\",\n  \"company_id\": \"{{company_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ai/chat",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ai",
+								"chat"
+							]
+						},
+						"description": "Ask natural language questions about your finances"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Smart Insights",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ai/insights?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ai",
+								"insights"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Generate proactive financial insights and alerts"
+					},
+					"response": []
+				},
+				{
+					"name": "Enhance Transaction Description",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"apply\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions/68f91814f00e93c3cf3ac511/enhance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"68f91814f00e93c3cf3ac511",
+								"enhance"
+							]
+						},
+						"description": "Enhance transaction description for better clarity (set apply:true to save)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin (SuperAdmin Only)",
+			"item": [
+				{
+					"name": "List All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						},
+						"description": "List all users in the system (SuperAdmin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "List All Companies",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/companies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"companies"
+							]
+						},
+						"description": "List all companies in the system (SuperAdmin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check API health, database connectivity, and Redis status"
+					},
+					"response": []
+				},
+				{
+					"name": "Status Check (Alias)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"status"
+							]
+						},
+						"description": "Alternative health check endpoint"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Home & Dashboard",
+			"item": [
+				{
+					"name": "Get Home (Root)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/?company_id={{company_id}}&page=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}",
+									"description": "Optional - uses default if not provided"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number for pagination"
+								}
+							]
+						},
+						"description": "Get home page with transactions, balance, and user info"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Home (/home)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/home?company_id={{company_id}}&page=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"home"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Same as root endpoint - returns dashboard data"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Operations",
+			"item": [
+				{
+					"name": "Upload Transactions File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"description": "CSV, XLSX, or XLS file with transactions",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"upload"
+							]
+						},
+						"description": "Upload CSV or Excel file to import transactions (max 10MB, rate limited to 10/hour)"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Info (GET)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"upload"
+							]
+						},
+						"description": "Get information about the upload endpoint"
+					},
+					"response": []
+				},
+				{
+					"name": "Export Transactions (CSV)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/export/csv?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"export",
+								"csv"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Export transactions as CSV file"
+					},
+					"response": []
+				},
+				{
+					"name": "Export Transactions (Excel)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/export/excel?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"export",
+								"excel"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Export transactions as Excel file"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bulk Operations",
+			"item": [
+				{
+					"name": "Bulk Save Transactions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"company_id\": \"{{company_id}}\",\n    \"date\": \"2025-10-15\",\n    \"description\": \"Client payment received\",\n    \"amount\": 5000.00,\n    \"type\": \"inflow\",\n    \"category\": \"revenue\",\n    \"currency\": \"USD\"\n  },\n  {\n    \"company_id\": \"{{company_id}}\",\n    \"date\": \"2025-10-16\",\n    \"description\": \"Office rent payment\",\n    \"amount\": 2000.00,\n    \"type\": \"outflow\",\n    \"category\": \"operating\",\n    \"currency\": \"USD\"\n  },\n  {\n    \"company_id\": \"{{company_id}}\",\n    \"date\": \"2025-10-17\",\n    \"description\": \"Equipment purchase\",\n    \"amount\": 1500.00,\n    \"type\": \"outflow\",\n    \"category\": \"investing\",\n    \"currency\": \"USD\"\n  }\n]"
+						},
+						"url": {
+							"raw": "{{base_url}}/save_transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"save_transactions"
+							]
+						},
+						"description": "Bulk save multiple transactions at once. Returns summary with succeeded/failed counts."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Financial Analysis",
+			"item": [
+				{
+					"name": "Set Initial Balance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\",\n  \"initial_balance\": 10000.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/set-initial-balance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"set-initial-balance"
+							]
+						},
+						"description": "Set the initial balance for a company (can be negative for overdraft)"
+					},
+					"response": []
+				},
+				{
+					"name": "Balance by Date",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{company_id}}\",\n  \"date\": \"2025-10-20\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/balance-by-date",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"balance-by-date"
+							]
+						},
+						"description": "Calculate balance as of a specific date"
+					},
+					"response": []
+				},
+				{
+					"name": "Cash Overview",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cash-overview?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cash-overview"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get cash flow overview including CFO, CFI, CFF, burn rate, and runway"
+					},
+					"response": []
+				},
+				{
+					"name": "Cash Activities (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cash-activities?company_id={{company_id}}&page=1&per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cash-activities"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "1-100, default 10"
+								}
+							]
+						},
+						"description": "Get paginated list of cash activities/transactions"
+					},
+					"response": []
+				},
+				{
+					"name": "Monthly Balances",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/monthly-balances?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"monthly-balances"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get monthly balance data for charting"
+					},
+					"response": []
+				},
+				{
+					"name": "Monthly Income vs Expense",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/monthly-income-expense?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"monthly-income-expense"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get monthly income and expense breakdown"
+					},
+					"response": []
+				},
+				{
+					"name": "Cashout by Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cashout-categories?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cashout-categories"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get cashout amounts grouped by category"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports & Forecasting",
+			"item": [
+				{
+					"name": "Generate Cashflow Statement (Excel)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/generate_cashflow_statement?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generate_cashflow_statement"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Generate and download comprehensive cashflow statement as Excel file (rate limited to 30/hour)"
+					},
+					"response": []
+				},
+				{
+					"name": "AI Forecast & Analysis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/forecast?company_id={{company_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "{{company_id}}"
+								}
+							]
+						},
+						"description": "Get AI-powered financial forecast with patterns, predictions, and risk metrics (rate limited to 20/hour)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cash Flow Statement Data",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Transactions (Drill Down)",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"description": "on GET api/cashflow-statement/transactions  \n\nCategory Values:- \\`CFO\\` - Cash Flow from Operating Activities- \\`CFI\\` - Cash Flow from Investing Activities- \\`CFF\\` - Cash Flow from Financing Activities  \nSubcategory Values:- CFO: \\`Cash-customer\\`, \\`Salary-suppliers\\`, \\`Income-tax\\`, \\`Other-cfo\\`- CFI: \\`Buy-property-equipments\\`, \\`Sell-property-equipments\\`, \\`Buy-investment\\`, \\`Sell-investment\\`, \\`Other-cfi\\`- CFF: \\`Issue-shares\\`, \\`borrowings\\`, \\`Repay-borrowings\\`, \\`Pay-dividends\\`, \\`Interest-paid\\`, \\`Other-cff\\`"
+		},
+		{
+			"name": "User Settings & Profile",
+			"item": [
+				{
+					"name": "Get User Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"settings"
+							]
+						},
+						"description": "Get user preferences and settings"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/update_profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"update_profile"
+							]
+						},
+						"description": "Update user profile information"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"current_password\": \"NewPassword123!\",\n  \"new_password\": \"NewPassword123!\",\n  \"confirm_password\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/change_password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"change_password"
+							]
+						},
+						"description": "Change user password (rate limited to 5/hour)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Module Preferences",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"modules\": [\"forecasting\", \"budgeting\", \"ai_insights\", \"working_capital\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/update_modules",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"update_modules"
+							]
+						},
+						"description": "Update user's enabled modules"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "company_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

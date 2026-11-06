@@ -1,0 +1,32 @@
+name: Deploy Flowback
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            cd ${{ secrets.EC2_PATH }}
+
+            git pull --rebase origin main
+
+            source venv/bin/activate
+            pip install -r requirements.txt
+
+            sudo systemctl restart flowback
